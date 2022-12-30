@@ -324,3 +324,30 @@ id-ce-subjectKeyIdentifier OBJECT IDENTIFIER ::=  { id-ce 14 }
 SubjectKeyIdentifier ::= KeyIdentifier
 ```
 
+4.2.1.3  Key Usage   
+키 사용 확장은 인증서에 포함된 키의 목적(예: 암호화, 서명, 인증서 서명)을 정의한다. 둘 이상의 작업에 사용될 수 있는 키를 제한해야 할 때 사용 제한이 적용될 수 있다. 예를 들어 RSA 키를 공개 키 인증서 및 CRL 이외의 개체에서 서명을 확인하는 데만 사용해야 하는 경우 디지털 서명 및/또는 비거부 비트가 할당된다. 마찬가지로 RSA 키를 키 관리에만 사용해야 하는 경우 키 암호화 비트가 할당된다.
+
+이 확장은 다른 공개 키 인증서 또는 CRL에서 디지털 서명의 유효성을 검사하는 데 사용되는 공개 키가 들어 있는 인증서에 반드시 존재해야 한다. 이 확장이 나타나면 중요하다고 표시되어야 한다.
+
+```
+id-ce-keyUsage OBJECT IDENTIFIER ::=  { id-ce 15 }
+
+KeyUsage ::= BIT STRING {
+    digitalSignature        (0),
+    nonRepudiation          (1),
+    keyEncipherment         (2),
+    dataEncipherment        (3),
+    keyAgreement            (4),
+    keyCertSign             (5),
+    cRLSign                 (6),
+    encipherOnly            (7),
+    decipherOnly            (8) }
+```
+
+KeyUsage 유형의 비트의 사용은 아래와 같다 : 
+
+- 디지털 서명 비트(The digitalSignature bit)   
+`디지털 서명 비트(The digitalSignature bit)`는 주체 공개 키가 인증서 서명(비트 5) 또는 CRL 서명(비트 6) 이외의 보안 서비스를 지원하는 디지털 서명 메커니즘과 함께 사용될 때 쓰인다. 디지털 서명 메커니즘은 종종 무결성을 갖춘 엔티티 인증 및 데이터 원본 인증에 사용된다. 
+
+- 부인방지 비트(The nonRepudiation bit)   
+`부인방지 비트(The nonRepudiation bit)`는 주체 공개 키가 인증서 또는 CRL 서명을 제외한 일부 작업을 거짓으로 거부하는 서명 엔티티로부터 보호하는 부인방지 서비스를 제공하는 데 사용되는 디지털 서명을 확인하는 데 사용될 때 쓰인다.

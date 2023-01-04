@@ -377,3 +377,17 @@ KeyUsage 유형의 비트의 사용은 아래와 같다 :
 
 이 명세는 키 사용 확장의 인스턴스화에서 설정할 수 있는 비트 조합을 제한하지 않는다. 그러나 특정 알고리즘에 대한 적절한 keyUsage 확장 값은 [PKIXALGS]에 명시되어 있다.
 
+4.2.1.4  Private Key Usage Period    
+이 확장은 인터넷 PKI 내에서 사용해서는 안 된다. 이 프로필을 준수하는 CA는 중요한 값인 개인 키 사용 기간 확장을 포함하는 인증서를 생성해서는 안 된다. 
+
+개인 키 사용 기간 확장을 통해 인증서 발급자는 인증서와 다른 개인 키의 유효 기간을 지정할 수 있다. 이 확장자는 디지털 서명 키와 함께 사용된다. 이 확장은 notBefore, notAfter 두 가지 선택적 요소로 구성된다. 인증서와 연관된 개인 키를 사용하여 두 구성 요소(notBefore, notAfter)에서 각각 지정한 시간 이전 또는 이후에 개체에 서명하면 안 된다. 이 명세를 준수하는 CA는 두 구성 요소 중 하나 이상이 있고, 확장이 중요하지 않은 경우가 아니면 개인 키 사용 기간 확장이 있는 인증서를 생성해서는 안 된다. 
+
+구성요소 notBefore, notAfter은 Generalizedtime 형식으로 쓰여야하고, section 4.1.2.5.2에 정의된 대로 지정되고 해석되어야 한다.
+
+```
+id-ce-privateKeyUsagePeriod OBJECT IDENTIFIER ::=  { id-ce 16 }
+
+PrivateKeyUsagePeriod ::= SEQUENCE {
+    notBefore       [0]     GeneralizedTime OPTIONAL,
+    notAfter        [1]     GeneralizedTime OPTIONAL }
+```

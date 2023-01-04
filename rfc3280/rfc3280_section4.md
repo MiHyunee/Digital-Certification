@@ -274,9 +274,9 @@ CA가 주체 필드에 대해 빈 시퀀스가 있는 인증서를 발급하는 
 
 #### 4.2.1  Standard Extensions 
 이 절에서는 인터넷 PKI에서 사용하기 위해 [X.509]에서 정의한 표준 인증서 확장을 식별한다. 각 확장은 [X.509]에 정의된 OID와 연관이 있다. 이 OID는 다음과 같이 정의되는 id-ce의 구성원이다:   
-`
+```
 id-ce   OBJECT IDENTIFIER ::=  { joint-iso-ccitt(2) ds(5) 29 }  
-`
+```
  
 4.2.1.1  Authority Key Identifier   
 `기관 키 식별자 확장`은 인증서에 서명하는 데 사용되는 <b>CA의 개인 키에 대응하는 공개 키를 식별하는 수단</b>을 제공한다. 이 확장은 발행자가 여러 개의 서명 키를 가지고 있는 경우(다중 동시 키 쌍 또는 전환으로 인해) 사용된다. 식별은 키 식별자(발행자의 인증서에 있는 주체 키 식별자) 또는 발행자 이름 및 일련 번호(serial number)에 기초할 수 있다.
@@ -350,4 +350,30 @@ KeyUsage 유형의 비트의 사용은 아래와 같다 :
 `디지털 서명 비트(The digitalSignature bit)`는 주체 공개 키가 인증서 서명(비트 5) 또는 CRL 서명(비트 6) 이외의 보안 서비스를 지원하는 디지털 서명 메커니즘과 함께 사용될 때 쓰인다. 디지털 서명 메커니즘은 종종 무결성을 갖춘 엔티티 인증 및 데이터 원본 인증에 사용된다. 
 
 - 부인방지 비트(The nonRepudiation bit)   
-`부인방지 비트(The nonRepudiation bit)`는 주체 공개 키가 인증서 또는 CRL 서명을 제외한 일부 작업을 거짓으로 거부하는 서명 엔티티로부터 보호하는 부인방지 서비스를 제공하는 데 사용되는 디지털 서명을 확인하는 데 사용될 때 쓰인다.
+`부인방지 비트(The nonRepudiation bit)`는 주체 공개 키가 인증서 또는 CRL 서명을 제외한 일부 작업을 거짓으로 거부하는 서명 엔티티로부터 보호하는 부인방지 서비스를 제공하는 데 사용되는 디지털 서명을 확인하는 데 사용될 때 쓰인다. 
+
+    디지털 서명 비트와 부인방지 비트 사이의 추가적인 구별은 인증서 정책에서 추가적으로 특정하여 제공될 수 있다. 
+
+- 키암호화 비트(The keyEncipher bit)    
+`키암호화 비트(The keyEncipher bit)`는 주체 공개 키가 키 전송에 사용될 때 쓰인다. 예를 들어 RSA 키를 키 관리에 사용할 경우 이 비트가 설정된다.
+
+- 데이터암호화 비트(The dataEncipher bit)   
+`데이터암호화 비트(The dataEncipher bit)`는 암호화 키가 아닌 사용자 데이터를 암호화하는 데 주체 공개 키가 사용될 때 쓰인다. 
+
+- 키합의 비트(The keyAgreement bit)   
+`키합의 비트(The keyAgreement bit)`는 주체 공개 키가 키 합의에 사용될 때 쓰인다. 예를 들어 Diffie-Hellman 키를 키 관리에 사용할 경우 이 비트가 설정된다. 
+
+- The keyCertSign bit   
+`keyCertSign bit`는 주체 공개 키가 공개 키 인증서의 서명을 확인하는 데 사용될 때 쓰인다. keyCertSign 비트가 쓰이는 경우, 기본 제약 조건 확장 (section 4.2.1.10)의 CA 비트도 쓰여야한다.
+
+- The cRLSign bit   
+`cRLSign bit`는 인증서 해지 목록의 서명을 확인하는 데 주체 공개 키가 사용될 때(예: CRL, 델타 CRL 또는 ARL) 쓰인다. 이 비트는 CRL의 서명을 확인하는 데 사용되는 인증서에서 쓰여아한다.
+
+- The encipherOnly bit   
+`The encipherOnly bit`의 의미는 keyAgreement 비트가 없는 경우 정의되지 않는다. encipherOnly 비트가 쓰이고 keyAgreement 비트도 설정된 경우, 주체 공개 키를 키 동의가 수행되는 동안 데이터를 암호화에 사용할 수 있다.
+
+- The decipherOnly bit
+`The decipherOnly bit`의 의미는 keyAgreement 비트가 없는 경우 정의되지 않는다. decipherOnly 비트가 쓰이고 keyAgreement 비트도 설정된 경우, 주체 공개 키를 키 동의가 수행되는 동안 데이터를 복호화 하는데 사용할 수 있다.
+
+이 명세는 키 사용 확장의 인스턴스화에서 설정할 수 있는 비트 조합을 제한하지 않는다. 그러나 특정 알고리즘에 대한 적절한 keyUsage 확장 값은 [PKIXALGS]에 명시되어 있다.
+

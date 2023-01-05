@@ -391,3 +391,81 @@ PrivateKeyUsagePeriod ::= SEQUENCE {
     notBefore       [0]     GeneralizedTime OPTIONAL,
     notAfter        [1]     GeneralizedTime OPTIONAL }
 ```
+
+4.2.1.5 Certificate Policies   
+인증서 정책 확장에는 OID(개체 식별자) 및 선택적 한정자로 구성된 하나 이상의 정책 정보 용어 시퀀스가 포함되어 있다. 선택값인 한정자기 존재하더라도 정책의 정의는 변경하지 않는다. 
+
+End entity 인증서에서 나타나는 이러한 정책 정보 용어는 인증서가 발급된 정책과 인증서를 사용할 수 있는 목적을 표현한다. CA 인증서에서 나타나는 이러한 정책 정보 용어는 이 인증서를 포함하는 인증 경로에 대한 정책 집합을 제한한다. CA가 이 인증서를 포함하는 인증 경로에 대한 정책 집합을 제한하지 않으려는 경우, { 2 5 29 32 0}의 값으로 특수 정책인 anyPolicy를 할당할 수 있다.
+
+특정 정책 요구 사항이 있는 응용 프로그램에는 허용할 정책 목록이 있어야하며 인증서의 정책 OID를 해당 목록과 비교해야 한다. 이 확장이 중요한 경우, 경로 검증 소프트웨어는 반드시 이 확장을 해석하거나(이 때, 선택적 한정자 포함하여 해석) 인증서를 거부할 수 있어야 한다. 
+
+상호 운용성을 높이기 위해 이 명세는 정책 정보 용어가 OID로만 구성될 것을 권장한다. OID만으로는 부족한 경우, 본 section에서 확인된 한정자의 사용을 강력히 권장한다. 한정자가 특수 정책 (anyPolicy)와 함께 사용되는 경우, 한정자는 본 section에서 식별된 한정자로 제한되어야 한다. 
+
+이 규격은 인증서 정책 작성자 및 인증서 발급자가 사용할 두 가지 정책 한정자 유형을 정의한다. 한정자 유형은 `CPS Pointer` 및 `User Notice`이다.
+
+- CPS Pointer   
+CPS 포인터 한정자에는 CA에서 게시한 CPS(인증 사용 약관)에 대한 포인터가 포함되어 있다. 포인터는 URI 형식이다. 이 한정자에 대한 처리 요구 사항은 구현자(사용자)에 따른다. 중요도 값에 관계없이 이 확장에 대해 본 규격에서는 어떤 조치도 요구하지 않는다.
+
+- User Notice   
+사용자 통지는 인증서를 사용할 때 신뢰 당사자에게 표시하기 위해 쓰인다. 응용프로그램 소프트웨어는 사용된 인증 경로의 모든 인증서에 모든 사용자 통지를 표시해야 하는데, 이때 통지가 중복되는 경우에는 사본 하나만 표시하면 된다. 이러한 중복을 방지하려면 이 한정자는 다른 조직에 발급된 end entity 인증서와 CA 인증서에만 존재해야 한다.
+
+   User notice에 존재하는 선택 필드 항목 : noticeRef 필드, explicitText 필드     
+   
+   - noticeRef field   
+   noticeRef 필드를 사용하면 기관의 이름을 지정하고 해당 기관이 준비한 특정 텍스트 문을 번호로 식별한다. 예를 들어 기관 "CertsRU"를 식별하고 번호 1로 통지한다. 일반적인 구현에서 응용프로그램 소프트웨어에는 CertsRU에 대한 현재의 통지가 포함된 통지 파일이 존재한다: 응용 프로그램은 파일에서 통지 텍스트를 추출하여 표시한다. 메시지는 다국어일 수 있으므로 소프트웨어가 자체 환경에 대한 특정 언어 메시지를 선택가능하다.
+
+   - explicitText field   
+    explicitText 필드는 인증서에 직접 텍스트 문을 포함한다. explicitText 필드는 최대 크기가 200자인 문자열이다.
+
+    noticeRef, explicitText 필드 모두 하나의 한정자에 포함되며, 응용프로그램 소프트웨어가 noticeRef 옵션으로 표시된 알림 텍스트를 찾을 수 있는 경우 해당 텍스트를 표시해야 한다: 그렇지 않을 경우, explicitText 문자열이 표시되어야 한다.
+
+    참고: explicitText는 최대 크기가 200자인 문자열이지만, 본 명세를 따르지 않는 CA는 이를 초과한다. 따라서, 인증서 사용자는 200자를 초과하는 explicitText를 처리할 수 있어야한다.
+
+```
+    id-ce-certificatePolicies OBJECT IDENTIFIER ::=  { id-ce 32 }
+
+   anyPolicy OBJECT IDENTIFIER ::= { id-ce-certificate-policies 0 }
+
+   certificatePolicies ::= SEQUENCE SIZE (1..MAX) OF PolicyInformation
+
+   PolicyInformation ::= SEQUENCE {
+        policyIdentifier   CertPolicyId,
+        policyQualifiers   SEQUENCE SIZE (1..MAX) OF
+                                PolicyQualifierInfo OPTIONAL }
+
+   CertPolicyId ::= OBJECT IDENTIFIER
+
+   PolicyQualifierInfo ::= SEQUENCE {
+        policyQualifierId  PolicyQualifierId,
+        qualifier          ANY DEFINED BY policyQualifierId }
+
+   -- policyQualifierIds for Internet policy qualifiers
+
+   id-qt          OBJECT IDENTIFIER ::=  { id-pkix 2 }
+   id-qt-cps      OBJECT IDENTIFIER ::=  { id-qt 1 }
+   id-qt-unotice  OBJECT IDENTIFIER ::=  { id-qt 2 }
+
+   PolicyQualifierId ::=
+        OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
+
+   Qualifier ::= CHOICE {
+        cPSuri           CPSuri,
+        userNotice       UserNotice }
+
+   CPSuri ::= IA5String
+
+   UserNotice ::= SEQUENCE {
+        noticeRef        NoticeReference OPTIONAL,
+        explicitText     DisplayText OPTIONAL}
+
+   NoticeReference ::= SEQUENCE {
+        organization     DisplayText,
+        noticeNumbers    SEQUENCE OF INTEGER }
+
+   DisplayText ::= CHOICE {
+        ia5String        IA5String      (SIZE (1..200)),
+        visibleString    VisibleString  (SIZE (1..200)),
+        bmpString        BMPString      (SIZE (1..200)),
+        utf8String       UTF8String     (SIZE (1..200)) }
+```
+

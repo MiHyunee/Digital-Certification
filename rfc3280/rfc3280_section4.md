@@ -469,3 +469,19 @@ CPS 포인터 한정자에는 CA에서 게시한 CPS(인증 사용 약관)에 �
         utf8String       UTF8String     (SIZE (1..200)) }
 ```
 
+4.2.1.6  Policy Mappings   
+이 확장은 CA인증서에서 쓰인다. 이 확장은 하나 이상의 OID 쌍을 나열한다: 각 쌍에는 issuerDomainPolicy 및 subjectDomainPolicy가 포함된다. OID 쌍은 발급CA가 issuerDomainPolicy를 주체 CA의 subjectDomainPolicy와 동일한 것으로 간주함을 나타낸다. 
+
+발급CA의 사용자는 특정 응용프로그램에 대해 issuerDomainPolicy를 허용할 수 있다. 정책 매핑은 issuerDomainPolicy와 유사한 것으로 받아 들여질 수 있는 주체 CA와 관련된 정책 목록을 정의한다.
+
+정책 매핑 확장에서 이름이 지정된 각 issuerDomainPolicy도 동일한 인증서의 인증서 정책 확장에서 선언되어야 한다. 정책은 특별한 값인 anyPolicy로 또는 anyPolicy로부터 매핑되어서는 안된다 (section 4.2.1.5).
+
+이 확장은 CA 및/또는 응용프로그램에서 지원할 수 있으며 중요한 값으로 선언되면 안된다.
+
+```
+id-ce-policyMappings OBJECT IDENTIFIER ::=  { id-ce 33 }
+
+PolicyMappings ::= SEQUENCE SIZE (1..MAX) OF SEQUENCE {
+    issuerDomainPolicy      CertPolicyId,
+    subjectDomainPolicy     CertPolicyId }
+```
